@@ -1,0 +1,128 @@
+<div ng-include="'src/app/templates/layouts/header.html'"></div>
+
+<div class="detailContainer">
+	<div class="container">
+		<div class="detail">
+			<div class="content" style="width: 100%; margin: 0 auto; background: #eee; padding: 15px 15px; border-radius: 15px;">
+				<div class="col-md-12 ctn_title">
+					<h2 class="title">{{data.title}}
+						<span style="font-size: 18px;" ng-click="openAlertDelete()" class="glyphicon glyphicon-trash pull-right"></span>
+						<span style="font-size: 18px;" ng-click="openFromEdit()" class="glyphicon glyphicon-edit pull-right"></span>
+					</h2>
+				</div>
+				<div class="col-md-3">
+					<img class="img-thumbnail" style="width: 100%" ng-src="src/assets/images/{{data.image_name}}">
+				</div>
+				<div class="col-md-9">
+					<p>{{ data.content }}</p>
+				</div>
+
+				<div class="form-group comment" style="clear: both;">
+					<h2 >Comment</h2>
+					<div class="form-group" style="overflow: hidden;">
+						<textarea class="form-control" name="comment" ng-model="data.comment" rows="3" ng-click="openFromComment()"></textarea>
+						<p></p>
+						<button class="btn btn-primary pull-left" ng-click="openFromComment()">Comment</button>
+					</div>
+				</div>
+				<div class="form-group content_comment">
+					<div class="sub_comment" ng-repeat="i in listComment">
+						<div class="content_left">
+							<img class="img-thumbnail" src="src/assets/images/avatar/avt2.jpg">
+						</div>
+						<div class="content_right">
+							<h3>{{i.fullname}}</h3>
+							<small style="font-style: italic; color: #aaa">{{i.updated | date:'MMM d, y h:mm:ss a'}}</small>
+							<p>{{i.comment}}</p>
+							<div class="action">
+								<p class="fa fa-thumbs-o-up action1" ng-click="like(id = i.id)"> {{i.like}} Like</p>
+								<p class="fa fa-reply action2" ng-click="isCollapsed = !isCollapsed"> Reply</p>
+							</div>
+							<div class="sub_reply">
+								<div ng-repeat="pk in listReply">
+									<div class="div_reply" ng-show="pk.comment_id == i.id">
+										<div class="content_left">
+											<img class="img-thumbnail" src="src/assets/images/avatar/avt2.jpg">
+										</div>
+										<div class="content_right">
+											<h3>{{pk.fullname}}</h3>
+											<small style="font-style: italic; color: #aaa">{{pk.updated | date:'MMM d, y h:mm:ss a'}}</small>
+											<p>{{pk.reply}}</p>
+											<div class="action">
+												<p class="fa fa-thumbs-o-up action1" ng-click="reply_like(reply_id = pk.id, id= i.id)"> {{pk.like}} Like</p>
+												<!-- <p class="fa fa-reply action2" ng-click="isCollapsed = !isCollapsed"> Reply</p> -->
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<collapse></collapse>
+
+							<!-- <div ng-if="isCollapsed" class="reply">
+								<label for="title">Fullname</label>
+								<input type="text" class="form-control" name="title" id="fullname" placeholder="Fullname" ng-model="data.fullname" />
+								<label for="title">Comment</label>
+								<textarea class="form-control" name="reply" ng-model="data.reply" placeholder="Comment..." rows="3"></textarea>
+								<p></p>
+								<button class="btn btn-primary pull-left" ng-click="reply(id = i.id, reply = data.reply)">Reply</button>
+							</div> -->
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<modal title="Edit Blog" visible="showModal">
+				<form role="form" enctype="multipart/form-data" method="post">
+					<div class="form-group">
+						<label for="title">Title</label>
+						<input type="title" class="form-control" name="title" id="title" placeholder="Title" ng-model="data.title" />
+					</div>
+					<div class="form-group">
+						<label for="content">Content</label>
+						<textarea class="form-control" rows="10" type="text" name="title" ng-model="data.content"></textarea>
+					</div>
+					<div class="form-group">
+						<label>Image</label>
+						<p id="img1" ><img class="img-thumbnail" style="width: 30%" ng-src="src/assets/images/{{data.image_name}}"></p>
+						<p id="img2" style="display: none">
+							<img class="img-thumbnail"  style="width: 30%" ng-src="{{stepsModel}}" />
+						</p>
+
+						<input type="file" name="image" file-input="files"  accept="image/png, image/jpeg, image/jpg" ng-model-instant onchange="angular.element(this).scope().imageUpload(this)" >
+					</div>
+					<div class="form-group" style="text-align: center;">
+						<button type="submit" ng-click="save(data, files)" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</modal>
+
+			<modal title="Delete" visible="showModalDelete">
+				<form role="form" enctype="multipart/form-data" method="post" style="overflow: hidden;">
+					<div class="form-group">
+						<button type="submit" ng-click="yes()" class="btn btn-primary pull-left">Yes</button>
+						<button type="submit" ng-click="no()" class="btn btn-primary pull-right">No</button>
+					</div>
+				</form>
+			</modal>
+
+			<modal title="Comment" visible="formComment">
+				<form role="form" enctype="multipart/form-data" method="post">
+					<div class="form-group">
+						<label for="title">Fullname</label>
+						<input type="text" class="form-control" name="title" id="fullname" placeholder="Fullname" ng-model="data.fullname" />
+					</div>
+					<div class="form-group">
+						<label for="content">Comment</label>
+						<textarea class="form-control" rows="10" type="text" name="comment" ng-model="data.comment" id="content" placeholder="Comment..."></textarea>
+					</div>
+					<div class="form-group" style="text-align: center; overflow: hidden;">
+						<button class="btn btn-primary pull-left" type="submit" ng-click="addComment(data)">Comment</button>
+						<button class="btn btn-primary pull-right" type="submit" ng-click="no()">Cancel</button>
+					</div>
+				</form>
+			</modal>
+
+
+		</div>
+	</div>
+</div>
